@@ -7,7 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CryptoExchange.Net" Version="10.5.2" />
+		<PackageReference Include="CryptoExchange.Net" Version="10.6.2" />
 	</ItemGroup>
 
 </Project>
