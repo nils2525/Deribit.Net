@@ -1,6 +1,5 @@
-using System.Net;
+using CryptoExchange.Net;
 using CryptoExchange.Net.Clients;
-using CryptoExchange.Net.Interfaces;
 using CryptoExchange.Net.Interfaces.Clients;
 using Deribit.Net;
 using Deribit.Net.Clients;
@@ -105,25 +104,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new DeribitRestClient(client, serviceProvider.GetRequiredService<ILoggerFactory>(), serviceProvider.GetRequiredService<IOptions<DeribitRestOptions>>());
             }).ConfigurePrimaryHttpMessageHandler((serviceProvider) =>
             {
-                var handler = new HttpClientHandler();
-                try
-                {
-                    handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                    handler.DefaultProxyCredentials = CredentialCache.DefaultCredentials;
-                }
-                catch (PlatformNotSupportedException)
-                { }
-
                 var options = serviceProvider.GetRequiredService<IOptions<DeribitRestOptions>>().Value;
-                if (options.Proxy != null)
-                {
-                    handler.Proxy = new WebProxy
-                    {
-                        Address = new Uri($"{options.Proxy.Host}:{options.Proxy.Port}"),
-                        Credentials = options.Proxy.Password == null ? null : new NetworkCredential(options.Proxy.Login, options.Proxy.Password)
-                    };
-                }
-                return handler;
+                return LibraryHelpers.CreateHttpClientMessageHandler(options.Proxy, options.HttpKeepAliveInterval);
             });
             services.Add(new ServiceDescriptor(typeof(IDeribitSocketClient), x => { return new DeribitSocketClient(x.GetRequiredService<IOptions<DeribitSocketOptions>>(), x.GetRequiredService<ILoggerFactory>()); }, socketClientLifeTime ?? ServiceLifetime.Singleton));
 
@@ -131,7 +113,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICryptoSocketClient, CryptoSocketClient>();
             services.AddSingleton<IDeribitUserClientProvider, DeribitUserClientProvider>(x =>
             new DeribitUserClientProvider(
-                x.GetRequiredService<HttpClient>(),
+                x.GetRequiredService<IHttpClientFactory>().CreateClient(typeof(IDeribitRestClient).Name),
                 x.GetRequiredService<ILoggerFactory>(),
                 x.GetRequiredService<IOptions<DeribitRestOptions>>(),
                 x.GetRequiredService<IOptions<DeribitSocketOptions>>()));
