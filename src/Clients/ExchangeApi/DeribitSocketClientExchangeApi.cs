@@ -26,7 +26,7 @@ namespace Deribit.Net.Clients.ExchangeApi
     /// <summary>
     /// Client providing access to the CryptoCom Exchange websocket Api
     /// </summary>
-    internal partial class DeribitSocketClientExchangeApi : SocketApiClient, IDeribitSocketClientExchangeApi
+    internal partial class DeribitSocketClientExchangeApi : SocketApiClient<DeribitEnvironment, DeribitAuthenticationProvider, HMACCredential>, IDeribitSocketClientExchangeApi
     {
         #region constructor/destructor
 
@@ -82,7 +82,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             => new SystemTextJsonMessageSerializer(SerializerOptions.WithConverters(DeribitExchange.SerializerContext));
 
         /// <inheritdoc />
-        protected override AuthenticationProvider CreateAuthenticationProvider(ApiCredentials credentials)
+        protected override DeribitAuthenticationProvider CreateAuthenticationProvider(HMACCredential credentials)
             => new DeribitAuthenticationProvider(credentials);
 
         protected override async Task<CallResult> ConnectSocketAsync(ISocketConnection socketConnection, CancellationToken ct)

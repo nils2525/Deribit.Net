@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Deribit.Net.Clients
 {
     /// <inheritdoc cref="IDeribitSocketClient" />
-    public class DeribitSocketClient : BaseSocketClient, IDeribitSocketClient
+    public class DeribitSocketClient : BaseSocketClient<DeribitEnvironment, HMACCredential>, IDeribitSocketClient
     {
         #region fields
         #endregion
@@ -47,12 +47,6 @@ namespace Deribit.Net.Clients
         }
         #endregion
 
-        /// <inheritdoc />
-        public void SetOptions(UpdateOptions options)
-        {
-            ExchangeApi.SetOptions(options);
-        }
-
         /// <summary>
         /// Set the default options to be used when creating new clients
         /// </summary>
@@ -60,14 +54,6 @@ namespace Deribit.Net.Clients
         public static void SetDefaultOptions(Action<DeribitSocketOptions> optionsDelegate)
         {
             DeribitSocketOptions.Default = ApplyOptionsDelegate(optionsDelegate);
-        }
-
-        /// <inheritdoc />
-        public void SetApiCredentials(ApiCredentials credentials)
-        {
-
-            ExchangeApi.SetApiCredentials(credentials);
-
         }
     }
 }

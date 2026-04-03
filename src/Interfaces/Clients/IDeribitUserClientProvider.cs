@@ -13,7 +13,7 @@ namespace Deribit.Net.Interfaces.Clients
         /// <param name="userIdentifier">The identifier for the user</param>
         /// <param name="credentials">The credentials for the user</param>
         /// <param name="environment">The environment to use</param>
-        void InitializeUserClient(string userIdentifier, ApiCredentials credentials, DeribitEnvironment? environment = null);
+        void InitializeUserClient(string userIdentifier, HMACCredential credentials, DeribitEnvironment? environment = null);
 
         /// <summary>
         /// Get the Rest client for a specific user. In case the client does not exist yet it will be created and the <paramref name="credentials"/> should be provided, unless <see cref="InitializeUserClient" /> has been called prior for this user.
@@ -21,7 +21,7 @@ namespace Deribit.Net.Interfaces.Clients
         /// <param name="userIdentifier">The identifier for user</param>
         /// <param name="credentials">The credentials for the user. Required the first time a client is requested for this user unless <see cref="InitializeUserClient" /> has been called prior for this user.</param>
         /// <param name="environment">The environment to use</param>
-        IDeribitRestClient GetRestClient(string userIdentifier, ApiCredentials? credentials = null, DeribitEnvironment? environment = null);
+        IDeribitRestClient GetRestClient(string userIdentifier, HMACCredential? credentials = null, DeribitEnvironment? environment = null);
 
         /// <summary>
         /// Get the Socket client for a specific user. In case the client does not exist yet it will be created and the <paramref name="credentials"/> should be provided, unless <see cref="InitializeUserClient" /> has been called prior for this user.
@@ -29,6 +29,6 @@ namespace Deribit.Net.Interfaces.Clients
         /// <param name="userIdentifier">The identifier for user</param>
         /// <param name="credentials">The credentials for the user. Required the first time a client is requested for this user unless <see cref="InitializeUserClient" /> has been called prior for this user.</param>
         /// <param name="environment">The environment to use</param>
-        IDeribitSocketClient GetSocketClient(string userIdentifier, ApiCredentials? credentials = null, DeribitEnvironment? environment = null);
+        IDeribitSocketClient GetSocketClient(string userIdentifier, HMACCredential? credentials = null, DeribitEnvironment? environment = null);
     }
 }

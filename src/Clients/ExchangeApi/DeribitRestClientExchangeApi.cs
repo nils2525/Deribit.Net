@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Deribit.Net.Clients.ExchangeApi
 {
     /// <inheritdoc cref="IDeribitRestClientExchangeApi" />
-    internal partial class DeribitRestClientExchangeApi : RestApiClient, IDeribitRestClientExchangeApi
+    internal partial class DeribitRestClientExchangeApi : RestApiClient<DeribitEnvironment, DeribitAuthenticationProvider, HMACCredential>, IDeribitRestClientExchangeApi
     {
         protected override IRestMessageHandler MessageHandler { get; } = new DeribitRestMessageHandler();
 
@@ -44,7 +44,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             => new SystemTextJsonMessageSerializer(SerializerOptions.WithConverters(DeribitExchange.SerializerContext));
 
         /// <inheritdoc />
-        protected override AuthenticationProvider CreateAuthenticationProvider(ApiCredentials credentials)
+        protected override DeribitAuthenticationProvider CreateAuthenticationProvider(HMACCredential credentials)
             => new DeribitAuthenticationProvider(credentials);
 
 

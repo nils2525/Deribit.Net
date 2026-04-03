@@ -43,14 +43,14 @@ namespace Deribit.Net.Clients
         }
 
         /// <inheritdoc />
-        public void InitializeUserClient(string userIdentifier, ApiCredentials credentials, DeribitEnvironment? environment = null)
+        public void InitializeUserClient(string userIdentifier, HMACCredential credentials, DeribitEnvironment? environment = null)
         {
             CreateRestClient(userIdentifier, credentials, environment);
             CreateSocketClient(userIdentifier, credentials, environment);
         }
 
         /// <inheritdoc />
-        public IDeribitRestClient GetRestClient(string userIdentifier, ApiCredentials? credentials = null, DeribitEnvironment? environment = null)
+        public IDeribitRestClient GetRestClient(string userIdentifier, HMACCredential? credentials = null, DeribitEnvironment? environment = null)
         {
             if (!_restClients.TryGetValue(userIdentifier, out var client))
                 client = CreateRestClient(userIdentifier, credentials, environment);
@@ -59,7 +59,7 @@ namespace Deribit.Net.Clients
         }
 
         /// <inheritdoc />
-        public IDeribitSocketClient GetSocketClient(string userIdentifier, ApiCredentials? credentials = null, DeribitEnvironment? environment = null)
+        public IDeribitSocketClient GetSocketClient(string userIdentifier, HMACCredential? credentials = null, DeribitEnvironment? environment = null)
         {
             if (!_socketClients.TryGetValue(userIdentifier, out var client))
                 client = CreateSocketClient(userIdentifier, credentials, environment);
@@ -67,7 +67,7 @@ namespace Deribit.Net.Clients
             return client;
         }
 
-        private IDeribitRestClient CreateRestClient(string userIdentifier, ApiCredentials? credentials, DeribitEnvironment? environment)
+        private IDeribitRestClient CreateRestClient(string userIdentifier, HMACCredential? credentials, DeribitEnvironment? environment)
         {
             var clientRestOptions = SetRestEnvironment(environment);
             var client = new DeribitRestClient(_httpClient, _loggerFactory, clientRestOptions);
@@ -79,7 +79,7 @@ namespace Deribit.Net.Clients
             return client;
         }
 
-        private IDeribitSocketClient CreateSocketClient(string userIdentifier, ApiCredentials? credentials, DeribitEnvironment? environment)
+        private IDeribitSocketClient CreateSocketClient(string userIdentifier, HMACCredential? credentials, DeribitEnvironment? environment)
         {
             var clientSocketOptions = SetSocketEnvironment(environment);
             var client = new DeribitSocketClient(clientSocketOptions!, _loggerFactory);

@@ -6,7 +6,7 @@ namespace Deribit.Net.Objects.Options
     /// <summary>
     /// CryptoCom options
     /// </summary>
-    public class DeribitOptions : LibraryOptions<DeribitRestOptions, DeribitSocketOptions, ApiCredentials, DeribitEnvironment>
+    public class DeribitOptions : LibraryOptions<DeribitRestOptions, DeribitSocketOptions, HMACCredential, DeribitEnvironment>
     {
     }
 }

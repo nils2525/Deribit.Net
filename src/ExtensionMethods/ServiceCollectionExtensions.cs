@@ -109,8 +109,6 @@ namespace Microsoft.Extensions.DependencyInjection
             }).SetHandlerLifetime(Timeout.InfiniteTimeSpan);
             services.Add(new ServiceDescriptor(typeof(IDeribitSocketClient), x => { return new DeribitSocketClient(x.GetRequiredService<IOptions<DeribitSocketOptions>>(), x.GetRequiredService<ILoggerFactory>()); }, socketClientLifeTime ?? ServiceLifetime.Singleton));
 
-            services.AddTransient<ICryptoRestClient, CryptoRestClient>();
-            services.AddSingleton<ICryptoSocketClient, CryptoSocketClient>();
             services.AddSingleton<IDeribitUserClientProvider, DeribitUserClientProvider>(x =>
             new DeribitUserClientProvider(
                 x.GetRequiredService<IHttpClientFactory>().CreateClient(typeof(IDeribitRestClient).Name),

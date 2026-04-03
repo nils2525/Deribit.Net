@@ -1,3 +1,4 @@
+using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects.Options;
 
 namespace Deribit.Net.Objects.Options
@@ -5,7 +6,7 @@ namespace Deribit.Net.Objects.Options
     /// <summary>
     /// Options for the CryptoComRestClient
     /// </summary>
-    public class DeribitRestOptions : RestExchangeOptions<DeribitEnvironment>
+    public class DeribitRestOptions : RestExchangeOptions<DeribitEnvironment, HMACCredential>
     {
         public TimeSpan ReceiveWindow { get; set; } = TimeSpan.FromSeconds(5);
 

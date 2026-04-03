@@ -1,3 +1,4 @@
+using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects.Options;
 
 namespace Deribit.Net.Objects.Options
@@ -5,7 +6,7 @@ namespace Deribit.Net.Objects.Options
     /// <summary>
     /// Options for the CryptoComSocketClient
     /// </summary>
-    public class DeribitSocketOptions : SocketExchangeOptions<DeribitEnvironment>
+    public class DeribitSocketOptions : SocketExchangeOptions<DeribitEnvironment, HMACCredential>
     {
         /// <summary>
         /// Default options for new clients

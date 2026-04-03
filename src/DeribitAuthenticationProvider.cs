@@ -6,11 +6,11 @@ using CryptoExchange.Net.Objects;
 
 namespace Deribit.Net
 {
-    internal class DeribitAuthenticationProvider : AuthenticationProvider
+    internal class DeribitAuthenticationProvider : AuthenticationProvider<HMACCredential>
     {
-        public override ApiCredentialsType[] SupportedCredentialTypes { get; } = [ApiCredentialsType.Hmac];
+        public override string Key => ApiCredentials.Key;
 
-        public DeribitAuthenticationProvider(ApiCredentials credentials) : base(credentials)
+        public DeribitAuthenticationProvider(HMACCredential credentials) : base(credentials)
         { }
 
         public override void ProcessRequest(RestApiClient apiClient, RestRequestConfiguration requestConfig)
@@ -29,7 +29,7 @@ namespace Deribit.Net
                     { "refresh_token", refreshToken }
                 };
 
-            var key = _credentials.Key;
+            var key = ApiCredentials.Key;
             var timestamp = DateTimeConverter.ConvertToMilliseconds(DateTime.UtcNow);
             var nonce = new byte[8];
             var data = String.Empty;
@@ -40,11 +40,11 @@ namespace Deribit.Net
             return new ParameterCollection()
             {
                 { "grant_type", "client_signature" },
-                { "client_id", _credentials.Key },
+                { "client_id", ApiCredentials.Key },
                 { "timestamp", timestamp },
                 { "nonce", nonceString },
                 { "data", data },
-                { "signature", SignHMACSHA256(signatureText, SignOutputType.Hex).ToLower() },
+                { "signature", SignHMACSHA256(ApiCredentials, signatureText, SignOutputType.Hex).ToLower() },
             };
         }
     }

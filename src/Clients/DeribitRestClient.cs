@@ -11,7 +11,7 @@ using Deribit.Net.Objects.Options;
 namespace Deribit.Net.Clients
 {
     /// <inheritdoc cref="IDeribitRestClient" />
-    public class DeribitRestClient : BaseRestClient, IDeribitRestClient
+    public class DeribitRestClient : BaseRestClient<DeribitEnvironment, HMACCredential>, IDeribitRestClient
     {
         #region Api clients
 
@@ -48,12 +48,6 @@ namespace Deribit.Net.Clients
 
         #endregion
 
-        /// <inheritdoc />
-        public void SetOptions(UpdateOptions options)
-        {
-            ExchangeApi.SetOptions(options);
-        }
-
         /// <summary>
         /// Set the default options to be used when creating new clients
         /// </summary>
@@ -61,14 +55,6 @@ namespace Deribit.Net.Clients
         public static void SetDefaultOptions(Action<DeribitRestOptions> optionsDelegate)
         {
             DeribitRestOptions.Default = ApplyOptionsDelegate(optionsDelegate);
-        }
-
-        /// <inheritdoc />
-        public void SetApiCredentials(ApiCredentials credentials)
-        {
-
-            ExchangeApi.SetApiCredentials(credentials);
-
         }
     }
 }
