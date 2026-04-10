@@ -3,6 +3,7 @@ using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using Deribit.Net.Objects.Internal;
 using Microsoft.Extensions.Logging;
+using CryptoExchange.Net.Sockets.Default.Routing;
 
 namespace Deribit.Net.Objects.Sockets.Subscriptions
 {

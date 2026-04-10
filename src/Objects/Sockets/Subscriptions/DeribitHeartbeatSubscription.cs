@@ -1,6 +1,7 @@
 ﻿using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
+using CryptoExchange.Net.Sockets.Default.Routing;
 using Deribit.Net.Objects.Internal;
 using Deribit.Net.Objects.Models;
 using Microsoft.Extensions.Logging;
