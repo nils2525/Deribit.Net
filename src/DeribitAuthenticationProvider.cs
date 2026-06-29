@@ -15,16 +15,16 @@ namespace Deribit.Net
 
         public override void ProcessRequest(RestApiClient apiClient, RestRequestConfiguration requestConfig)
         {
-            if (!requestConfig.Authenticated)
+            if (!requestConfig.RequestDefinition.Authenticated)
                 return;
 
             throw new NotImplementedException();
         }
 
-        public ParameterCollection AuthenticateSocket(string? refreshToken)
+        public Parameters AuthenticateSocket(string? refreshToken)
         {
             if (!String.IsNullOrWhiteSpace(refreshToken))
-                return new ParameterCollection()
+                return new Parameters(DeribitExchange._parameterSerializationSettings)
                 {
                     { "refresh_token", refreshToken }
                 };
@@ -37,7 +37,7 @@ namespace Deribit.Net
             var nonceString = BytesToHexString(nonce).ToLower();
             var signatureText = $"{timestamp}\n{nonceString}\n{data}";
 
-            return new ParameterCollection()
+            return new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "grant_type", "client_signature" },
                 { "client_id", ApiCredentials.Key },

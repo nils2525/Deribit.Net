@@ -30,12 +30,12 @@ namespace Deribit.Net.Clients.ExchangeApi
         #endregion
 
         #region constructor/destructor
-        internal DeribitRestClientExchangeApi(ILogger logger, HttpClient? httpClient, DeribitRestOptions options)
-            : base(logger, httpClient, options.Environment.RestClientAddress, options, options.ExchangeOptions)
+        internal DeribitRestClientExchangeApi(ILoggerFactory? loggerFactory, HttpClient? httpClient, DeribitRestOptions options)
+            : base(loggerFactory, DeribitExchange.ExchangeName, httpClient, options.Environment.RestClientAddress, options, options.ExchangeOptions)
         {
             Account = new DeribitRestClientExchangeApiAccount(this);
-            ExchangeData = new DeribitRestClientExchangeApiExchangeData(logger, this);
-            Trading = new DeribitRestClientExchangeApiTrading(logger, this);
+            ExchangeData = new DeribitRestClientExchangeApiExchangeData(_logger, this);
+            Trading = new DeribitRestClientExchangeApiTrading(_logger, this);
         }
         #endregion
 
@@ -48,20 +48,21 @@ namespace Deribit.Net.Clients.ExchangeApi
             => new DeribitAuthenticationProvider(credentials);
 
 
-        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal Task<HttpResult<T>> SendAsync<T>(RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
             => SendToAddressAsync<T>(BaseAddress, definition, parameters, cancellationToken, weight);
 
-        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal async Task<HttpResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
         {
-            var result = await base.SendAsync<DeribitResponse<T>>(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
-            if (!result)
-                return result.As<T>(default);
+            definition.BaseAddress = baseAddress;
+            var result = await base.SendAsync<DeribitResponse<T>>(definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            if (!result.Success)
+                return HttpResult.Fail<T>(result);
 
             return result.As(result.Data.Data);
         }
 
         /// <inheritdoc />
-        protected override Task<WebCallResult<DateTime>> GetServerTimestampAsync()
+        protected override Task<HttpResult<DateTime>> GetServerTimestampAsync()
             => ExchangeData.GetServerTimeAsync();
 
         /// <inheritdoc />

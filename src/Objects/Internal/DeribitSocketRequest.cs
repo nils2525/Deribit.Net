@@ -1,4 +1,4 @@
-﻿using CryptoExchange.Net;
+using CryptoExchange.Net;
 using CryptoExchange.Net.Objects;
 using System.Text.Json.Serialization;
 
@@ -16,12 +16,12 @@ namespace Deribit.Net.Objects.Internal
         public string Method { get; } = String.Empty;
 
         [JsonPropertyName("params"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ParameterCollection? Parameters { get; init; }
+        public Parameters? Parameters { get; init; }
 
         [JsonPropertyName("access_token"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? AccessToken { get; init; }
 
-        public DeribitSocketRequest(string method, ParameterCollection? parameters = null, string? accessToken = null)
+        public DeribitSocketRequest(string method, Parameters? parameters = null, string? accessToken = null)
         {
             Method = method;
             Parameters = parameters;

@@ -118,43 +118,43 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         /// Subscribe to trade updates
         /// <para><a href="https://api-docs.Deribit.com/spot/websocket/market-data#trades" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTrade[]>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTrade[]>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// Subscribe to candle updates
         /// <para><a href="https://api-docs.Deribit.com/spot/websocket/market-data#candlesticks" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToCandleUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitCandle[]>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToCandleUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitCandle[]>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// Subscribe to candle updates
         /// <para><a href="https://api-docs.Deribit.com/spot/websocket/market-data#candlesticks" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitOrderBook>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitOrderBook>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#ticker-instrument_name-interval" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#ticker-instrument_name-interval" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(IEnumerable<string> symbols, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(IEnumerable<string> symbols, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#user-orders-instrument_name-raw" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToUserOrderUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserOrder>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToUserOrderUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserOrder>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#user-trades-instrument_name-interval" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserTrade[]>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserTrade[]>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#user-portfolio-currency" /></para>
         /// </summary>
-        Task<CallResult<UpdateSubscription>> SubscribeToUserPortfolioUpdatesAsync(string? currency, Action<DataEvent<DeribitAccountBalance>> onMessage, CancellationToken ct = default);
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToUserPortfolioUpdatesAsync(string? currency, Action<DataEvent<DeribitAccountBalance>> onMessage, CancellationToken ct = default);
     }
 }

@@ -35,7 +35,7 @@ namespace Deribit.Net.Objects.Sockets
             : base(new(method), authenticated, weight)
         { }
 
-        public DeribitQuery(string method, ParameterCollection parameters, bool authenticated, int weight = 1)
+        public DeribitQuery(string method, Parameters parameters, bool authenticated, int weight = 1)
             : base(new(method, parameters), authenticated, weight)
         { }
     }
@@ -46,15 +46,15 @@ namespace Deribit.Net.Objects.Sockets
         public DeribitQueryBase(DeribitSocketRequest request, bool authenticated, int weight)
             : base(request, authenticated, weight)
         {
-            MessageRouter = MessageRouter.CreateWithoutTopicFilter<T>(request.Id.ToString(), HandleMessage);
+            MessageRouter = MessageRouter.CreateForQuery<T>(request.Id.ToString(), HandleMessage);
         }
 
         public CallResult<T> HandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, T message)
         {
             if (message.Error != null)
-                return new CallResult<T>(new ServerError(message.Error.Code, new ErrorInfo(ErrorType.Unknown, false, message.Error.Message)));
+                return CallResult.Fail<T>(new ServerError(message.Error.Code, new ErrorInfo(ErrorType.Unknown, false, message.Error.Message)));
 
-            return new CallResult<T>(message, originalData, null);
+            return CallResult.Ok(message, originalData);
         }
     }
 }

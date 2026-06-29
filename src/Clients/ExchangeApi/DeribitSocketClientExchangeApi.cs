@@ -33,8 +33,8 @@ namespace Deribit.Net.Clients.ExchangeApi
         /// <summary>
         /// ctor
         /// </summary>
-        internal DeribitSocketClientExchangeApi(ILogger logger, DeribitSocketOptions options) :
-            base(logger, options.Environment.SocketClientAddress!, options, options.ExchangeOptions)
+        internal DeribitSocketClientExchangeApi(ILoggerFactory? loggerFactory, DeribitSocketOptions options) :
+            base(loggerFactory, DeribitExchange.ExchangeName, options.Environment.SocketClientAddress!, options, options.ExchangeOptions)
         {
             KeepAliveInterval = TimeSpan.Zero;
             RateLimiter = DeribitExchange.RateLimiter.Socket;
@@ -42,9 +42,9 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
         #endregion
 
-        private Task<CallResult<Objects.Internal.DeribitResponse<string>>> SendHeartbeatConfigurationAsync(SocketConnection socketConnection)
+        private Task<QueryResult<Objects.Internal.DeribitResponse<string>>> SendHeartbeatConfigurationAsync(SocketConnection socketConnection)
         {
-            return socketConnection.SendAndWaitQueryAsync(new DeribitQuery<string>("/public/set_heartbeat", new ParameterCollection()
+            return socketConnection.SendAndWaitQueryAsync(new DeribitQuery<string>("/public/set_heartbeat", new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "interval", 30 }
             }, false));
@@ -92,20 +92,20 @@ namespace Deribit.Net.Clients.ExchangeApi
 
 
             var result = await base.ConnectSocketAsync(socketConnection, ct);
-            if (!result)
+            if (!result.Success)
                 return result;
 
             InitNewConnection(conn);
 
             var heartheatResult = await SendHeartbeatConfigurationAsync(conn);
-            if (!heartheatResult)
-                return heartheatResult;
+            if (!heartheatResult.Success)
+                return CallResult.Fail(heartheatResult.Error!);
 
             return result;
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTrade[]>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTrade[]>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitTrade[]>>((receiveTime, originalData, data) =>
             {
@@ -127,13 +127,13 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToCandleUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitCandle[]>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToCandleUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitCandle[]>> onMessage, CancellationToken ct = default)
         {
             throw new Exception("Not implemented");
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitOrderBook>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitOrderBook>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitOrderBook>>((receiveTime, originalData, data) =>
             {
@@ -152,7 +152,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
-        public Task<CallResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitTicker>>((receiveTime, originalData, data) =>
             {
@@ -171,7 +171,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
-        public Task<CallResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(IEnumerable<string> symbols, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToTickeUpdatesAsync(IEnumerable<string> symbols, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitTicker>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitTicker>>((receiveTime, originalData, data) =>
             {
@@ -190,7 +190,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
-        public Task<CallResult<UpdateSubscription>> SubscribeToUserOrderUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserOrder>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToUserOrderUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserOrder>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitUserOrder>>((receiveTime, originalData, data) =>
             {
@@ -209,7 +209,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
-        public Task<CallResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserTrade[]>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserTrade[]>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitUserTrade[]>>((receiveTime, originalData, data) =>
             {
@@ -229,7 +229,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
-        public Task<CallResult<UpdateSubscription>> SubscribeToUserPortfolioUpdatesAsync(string? currency, Action<DataEvent<DeribitAccountBalance>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToUserPortfolioUpdatesAsync(string? currency, Action<DataEvent<DeribitAccountBalance>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitAccountBalance>>((receiveTime, originalData, data) =>
             {
@@ -251,12 +251,12 @@ namespace Deribit.Net.Clients.ExchangeApi
         {
             var response = await base.QueryAsync(query, ct).ConfigureAwait(false);
             if (response.Data?.Error != null)
-                response.AsDatalessError(new ServerError(response.Data.Error.Code, new(CryptoExchange.Net.Objects.Errors.ErrorType.Unknown, response.Data.Error.Message)));
+                return CallResult.Fail<T>(new ServerError(response.Data.Error.Code, new(CryptoExchange.Net.Objects.Errors.ErrorType.Unknown, response.Data.Error.Message)));
 
             if (response.Error != null)
-                return response.AsError<T>(response.Error);
+                return CallResult.Fail<T>(response.Error);
 
-            return response.As(response.Data!.Data);
+            return CallResult.Ok(response.Data!.Data, response.OriginalData);
         }
 
         internal async Task<bool> SendHeartbeatAsync()
@@ -282,7 +282,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitSymbol>> GetSymbolAsync(string symbol, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection { { "instrument_name", symbol } };
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings){ { "instrument_name", symbol } };
             var query = new DeribitQuery<DeribitSymbol>("/public/get_instrument", parameters, false);
             return QueryAsync(query, ct);
         }
@@ -295,7 +295,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection { { "instrument_name", symbol } };
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings){ { "instrument_name", symbol } };
             var query = new DeribitQuery<DeribitTicker>("/public/ticker", parameters, false);
             return QueryAsync(query, ct);
         }
@@ -308,7 +308,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitAccount>> GetAccountSummariesAsync(CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "extended", true}
             };
@@ -318,7 +318,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity, string? label = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "instrument_name", symbol },
                 { "amount", quantity },
@@ -332,7 +332,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitUserOrder>> CancelOrderAsync(string orderId, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "order_id", orderId }
             };
@@ -342,7 +342,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitUserOrder[]>> GetOpenOrdersAsync(DeribitOrderKind kind, DeribitOrderType? type = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "kind", EnumConverter.GetString(kind)   }
             };
@@ -353,7 +353,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitUserOrder>> GetOrderAsync(string orderId, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "order_id", orderId }
             };
@@ -362,7 +362,7 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
         public Task<CallResult<DeribitUserTrade[]>> GetOrderTradesAsync(string orderId, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "order_id", orderId }
             };
@@ -372,7 +372,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitInstrumentTrades>> GetUserTradesByInstrumentAsync(string instrument, long? startSequence = null, long? endSequence = null, int? count = null, DateTime? startTime = null, DateTime? endTime = null, bool historical = false, DeribitSortOrder sortOrder = DeribitSortOrder.Default, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "instrument_name", instrument }
             };
@@ -390,7 +390,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitPagedResult<DeribitDeposit>>> GetDepositsAsync(string currency, int? count = null, int? offset = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 {"currency", currency }
             };
@@ -402,7 +402,7 @@ namespace Deribit.Net.Clients.ExchangeApi
 
         public Task<CallResult<DeribitPagedResult<DeribitWithdrawal>>> GetWithdrawalsAsync(string currency, int? count = null, int? offset = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection()
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 {"currency", currency }
             };

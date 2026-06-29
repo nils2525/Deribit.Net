@@ -13,6 +13,12 @@ namespace Deribit.Net
     public static class DeribitExchange
     {
         internal static DeribitSourceGenerationContext SerializerContext { get; } = new DeribitSourceGenerationContext();
+        internal static readonly ParameterSerializationSettings _parameterSerializationSettings = new()
+        {
+            Decimal = DecimalSerialization.String,
+            Array = ArrayParametersSerialization.MultipleValues,
+            Sort = false
+        };
 
         /// <summary>
         /// Exchange name

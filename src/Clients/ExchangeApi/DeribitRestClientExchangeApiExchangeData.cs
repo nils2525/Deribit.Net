@@ -19,7 +19,7 @@ namespace Deribit.Net.Clients.ExchangeApi
         #region Get Server Time
 
         /// <inheritdoc />
-        public async Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
+        public async Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
         {
             // No dedicated endpoint, use ticker endpoint which returns a timestamp
             var request = _definitions.GetOrCreate(HttpMethod.Get, "api/v2/public/get_time", DeribitExchange.RateLimiter.RestPublic, 1, false);
@@ -32,7 +32,7 @@ namespace Deribit.Net.Clients.ExchangeApi
         #region Get Symbols
 
         /// <inheritdoc />
-        public async Task<WebCallResult<DeribitSymbol[]>> GetSymbolsAsync(CancellationToken ct = default)
+        public async Task<HttpResult<DeribitSymbol[]>> GetSymbolsAsync(CancellationToken ct = default)
         {
             var request = _definitions.GetOrCreate(HttpMethod.Get, "api/v2/public/get_instruments", DeribitExchange.RateLimiter.RestPublicSpecific, 1, false);
             var result = await _baseClient.SendAsync<DeribitSymbol[]>(request, null, ct).ConfigureAwait(false);
@@ -40,23 +40,23 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
 
         /// <inheritdoc />
-        public async Task<WebCallResult<DeribitCurrency[]>> GetCurrencyInformationAsync(CancellationToken ct = default)
+        public async Task<HttpResult<DeribitCurrency[]>> GetCurrencyInformationAsync(CancellationToken ct = default)
         {
             var request = _definitions.GetOrCreate(HttpMethod.Get, "api/v2/public/get_currencies", DeribitExchange.RateLimiter.RestPublicSpecific, 1, false);
             var result = await _baseClient.SendAsync<DeribitCurrency[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
 
-        public async Task<WebCallResult<DeribitTicker[]>> GetTickersAsync(CancellationToken ct = default)
+        public async Task<HttpResult<DeribitTicker[]>> GetTickersAsync(CancellationToken ct = default)
         {
             var request = _definitions.GetOrCreate(HttpMethod.Get, "api/v2/public/ticker", DeribitExchange.RateLimiter.RestPublicSpecific, 1, false);
             var result = await _baseClient.SendAsync<DeribitTicker[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
 
-        public async Task<WebCallResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default)
+        public async Task<HttpResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection() {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings) {
                 { "instrument_name", symbol}
             };
 
@@ -65,7 +65,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             return result;
         }
 
-        public Task<WebCallResult<DeribitStatus>> GetExchangeStatusAsync(CancellationToken ct = default)
+        public Task<HttpResult<DeribitStatus>> GetExchangeStatusAsync(CancellationToken ct = default)
         {
             var request = _definitions.GetOrCreate(HttpMethod.Get, $"api/v2/public/status", DeribitExchange.RateLimiter.RestPublicSpecific, 1, false);
             return _baseClient.SendAsync<DeribitStatus>(request, null, ct);

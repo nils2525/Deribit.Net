@@ -28,19 +28,19 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
             _channels = channels.ToArray();
             IndividualSubscriptionCount = _channels.Length;
 
-            MessageRouter = MessageRouter.Create(channels.Select(c => MessageRoute<DeribitMessage<DeribitSubscriptionEvent<T>>>.CreateWithoutTopicFilter(c, DoHandleMessage)).ToArray());
+            MessageRouter = MessageRouter.Create(channels.Select(c => MessageRoute.CreateForEvent<DeribitMessage<DeribitSubscriptionEvent<T>>>(c, DoHandleMessage)).ToArray());
         }
 
         /// <inheritdoc />
         protected override Query? GetSubQuery(SocketConnection connection)
-            => new DeribitQuery<string[]>(Authenticated ? "/private/subscribe" : "/public/subscribe", new ParameterCollection()
+            => new DeribitQuery<string[]>(Authenticated ? "/private/subscribe" : "/public/subscribe", new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "channels", _channels }
             }, Authenticated);
 
         /// <inheritdoc />
         protected override Query? GetUnsubQuery(SocketConnection connection)
-            => new DeribitQuery<string[]>(Authenticated ? "/private/unsubscribe" : "/public/unsubscribe", new ParameterCollection()
+            => new DeribitQuery<string[]>(Authenticated ? "/private/unsubscribe" : "/public/unsubscribe", new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "channels", _channels }
             }, Authenticated);
@@ -48,7 +48,7 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
         public CallResult DoHandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, DeribitMessage<DeribitSubscriptionEvent<T>> message)
         {
             _handler.Invoke(receiveTime, originalData, message.Data);
-            return CallResult.SuccessResult;
+            return CallResult.Ok();
         }
     }
 }

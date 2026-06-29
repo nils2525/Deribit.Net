@@ -14,34 +14,34 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         /// <returns></returns>
-        Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
+        Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get symbols/instruments
         /// <para><a href="https://docs.deribit.com/#public-get_instruments" /></para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<DeribitSymbol[]>> GetSymbolsAsync(CancellationToken ct = default);
+        Task<HttpResult<DeribitSymbol[]>> GetSymbolsAsync(CancellationToken ct = default);
 
         /// <summary>
         /// 
         /// <para><a href="https://docs.deribit.com/#public-get_currencies" /></para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<DeribitCurrency[]>> GetCurrencyInformationAsync(CancellationToken ct = default);
+        Task<HttpResult<DeribitCurrency[]>> GetCurrencyInformationAsync(CancellationToken ct = default);
 
         /// <summary>
         /// 
         /// <para><a href="https://docs.deribit.com/#public-ticker" /></para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default);
+        Task<HttpResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
         /// 
         /// <para><a href="https://docs.deribit.com/#public-status" /></para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<DeribitStatus>> GetExchangeStatusAsync(CancellationToken ct = default);
+        Task<HttpResult<DeribitStatus>> GetExchangeStatusAsync(CancellationToken ct = default);
     }
 }

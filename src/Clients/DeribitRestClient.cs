@@ -43,7 +43,7 @@ namespace Deribit.Net.Clients
         {
             Initialize(options.Value);
 
-            ExchangeApi = AddApiClient(new DeribitRestClientExchangeApi(_logger, httpClient, options.Value));
+            ExchangeApi = AddApiClient(new DeribitRestClientExchangeApi(loggerFactory, httpClient, options.Value));
         }
 
         #endregion

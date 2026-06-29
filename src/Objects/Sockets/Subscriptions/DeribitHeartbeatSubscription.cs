@@ -12,7 +12,7 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
     {
         public DeribitHeartbeatSubscription(ILogger logger) : base(logger, false)
         {
-            MessageRouter = MessageRouter.CreateWithoutTopicFilter<DeribitMessage<DeribitHeartbeat>>("heartbeat", HandleMessage);
+            MessageRouter = MessageRouter.CreateForEvent<DeribitMessage<DeribitHeartbeat>>("heartbeat", HandleMessage);
         }
 
         protected override Query? GetUnsubQuery(SocketConnection connection)
@@ -27,7 +27,7 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
                 Task.Run(() => connection.SendAndWaitQueryAsync(query));
             }
 
-            return CallResult.SuccessResult;
+            return CallResult.Ok();
         }
     }
 }

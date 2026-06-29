@@ -43,7 +43,7 @@ namespace Deribit.Net.Clients
         public DeribitSocketClient(IOptions<DeribitSocketOptions> options, ILoggerFactory? loggerFactory = null) : base(loggerFactory, "Deribit")
         {
             Initialize(options.Value);
-            ExchangeApi = AddApiClient(new DeribitSocketClientExchangeApi(_logger, options.Value));
+            ExchangeApi = AddApiClient(new DeribitSocketClientExchangeApi(loggerFactory, options.Value));
         }
         #endregion
 
