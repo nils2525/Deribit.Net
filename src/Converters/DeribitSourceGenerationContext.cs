@@ -2,6 +2,7 @@
 using Deribit.Net.Enums;
 using Deribit.Net.Objects.Internal;
 using Deribit.Net.Objects.Models;
+using CryptoExchange.Net.Objects;
 
 namespace Deribit.Net.Converters
 {
@@ -52,6 +53,7 @@ namespace Deribit.Net.Converters
     [JsonSerializable(typeof(DeribitSocketAuthResponse))]
 
     [JsonSerializable(typeof(DeribitOrderBookEntryUpdateType))]
+    [JsonSerializable(typeof(Parameters))]
     internal partial class DeribitSourceGenerationContext : JsonSerializerContext
     { }
 }
