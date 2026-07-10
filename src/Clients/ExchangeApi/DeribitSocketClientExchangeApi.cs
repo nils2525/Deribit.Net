@@ -360,12 +360,18 @@ namespace Deribit.Net.Clients.ExchangeApi
             var query = new DeribitQuery<DeribitUserOrder>("/private/get_order_state", parameters, true);
             return QueryAsync(query, ct);
         }
+        /// <inheritdoc />
         public Task<CallResult<DeribitUserTrade[]>> GetOrderTradesAsync(string orderId, CancellationToken ct = default)
+            => GetOrderTradesAsync(orderId, false, ct);
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitUserTrade[]>> GetOrderTradesAsync(string orderId, bool historical, CancellationToken ct = default)
         {
             var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
                 { "order_id", orderId }
             };
+            parameters.AddOptional("historical", historical);
             var query = new DeribitQuery<DeribitUserTrade[]>("/private/get_user_trades_by_order", parameters, true);
             return QueryAsync(query, ct);
         }

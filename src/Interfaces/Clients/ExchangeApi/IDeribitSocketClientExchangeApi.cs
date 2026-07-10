@@ -81,9 +81,21 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<CallResult<DeribitUserOrder>> GetOrderAsync(string orderId, CancellationToken ct = default);
 
         /// <summary>
-        /// <para><a href="https://docs.deribit.com/#private-get_order_state" /></para>
+        /// Get trades for an order
+        /// <para><a href="https://docs.deribit.com/#private-get_user_trades_by_order" /></para>
         /// </summary>
+        /// <param name="orderId">Order id</param>
+        /// <param name="ct">Cancellation token</param>
         Task<CallResult<DeribitUserTrade[]>> GetOrderTradesAsync(string orderId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Get recent or historical trades for an order
+        /// <para><a href="https://docs.deribit.com/#private-get_user_trades_by_order" /></para>
+        /// </summary>
+        /// <param name="orderId">Order id</param>
+        /// <param name="historical">Whether to return historical trades instead of recent trades</param>
+        /// <param name="ct">Cancellation token</param>
+        Task<CallResult<DeribitUserTrade[]>> GetOrderTradesAsync(string orderId, bool historical, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#private-get_user_trades_by_instrument" /></para>
