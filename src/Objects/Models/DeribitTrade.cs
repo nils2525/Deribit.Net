@@ -21,8 +21,11 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("combo_id")]
         public string? ComboId { get; set; }
 
+        /// <summary>
+        /// Identifier of the combo trade this trade belongs to
+        /// </summary>
         [JsonPropertyName("combo_trade_id")]
-        public long? ComboTradeId { get; set; }
+        public string? ComboTradeId { get; set; }
 
         /// <summary>
         /// Trade size in contract units (optional, may be absent in historical trades)
