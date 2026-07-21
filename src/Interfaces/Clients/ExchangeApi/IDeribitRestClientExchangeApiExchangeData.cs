@@ -38,8 +38,8 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<HttpResult<DeribitTicker>> GetTickerAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
-        /// 
-        /// <para><a href="https://docs.deribit.com/#public-status" /></para>
+        /// Gets the platform-wide currency and index lock status.
+        /// <para><a href="https://docs.deribit.com/api-reference/supporting/public-status" /></para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         Task<HttpResult<DeribitStatus>> GetExchangeStatusAsync(CancellationToken ct = default);
