@@ -38,8 +38,11 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("interest_value")]
         public decimal? InterestValue { get; set; }
 
+        /// <summary>
+        /// ["<c>last_price</c>"] The last trade price, or <see langword="null"/> when no trade price is available
+        /// </summary>
         [JsonPropertyName("last_price")]
-        public decimal LastPrice { get; set; }
+        public decimal? LastPrice { get; set; }
 
         [JsonPropertyName("mark_price")]
         public decimal MarkPrice { get; set; }
