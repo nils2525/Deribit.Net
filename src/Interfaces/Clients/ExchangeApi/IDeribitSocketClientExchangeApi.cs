@@ -66,6 +66,33 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity, string? label = null, CancellationToken ct = default);
 
         /// <summary>
+        /// Places an order with Futures execution flags.
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-buy" /></para>
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-sell" /></para>
+        /// </summary>
+        /// <param name="symbol">Instrument name.</param>
+        /// <param name="side">Order side.</param>
+        /// <param name="type">Order type.</param>
+        /// <param name="price">Limit price.</param>
+        /// <param name="quantity">Order amount in the instrument's native amount unit.</param>
+        /// <param name="timeInForce">Time-in-force policy.</param>
+        /// <param name="reduceOnly">Whether the order may only reduce a position.</param>
+        /// <param name="label">Optional client label.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side,
+            DeribitOrderType type, decimal price, decimal quantity, DeribitTimeInForce timeInForce,
+            bool reduceOnly, string? label = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Closes the complete position for an instrument with a reduce-only market order.
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-close_position" /></para>
+        /// </summary>
+        /// <param name="symbol">Instrument name.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitPlaceOrderResult>> ClosePositionAsync(string symbol,
+            CancellationToken ct = default);
+
+        /// <summary>
         /// <para><a href="https://docs.deribit.com/#private-cancel" /></para>
         /// </summary>
         Task<CallResult<DeribitUserOrder>> CancelOrderAsync(string orderId, CancellationToken ct = default);
@@ -76,9 +103,49 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<CallResult<DeribitUserOrder[]>> GetOpenOrdersAsync(DeribitOrderKind kind, DeribitOrderType? type = null, CancellationToken ct = default);
 
         /// <summary>
+        /// Gets all open orders for one instrument.
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-get_open_orders_by_instrument" /></para>
+        /// </summary>
+        /// <param name="symbol">Instrument name.</param>
+        /// <param name="type">Optional order-type filter.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitUserOrder[]>> GetOpenOrdersByInstrumentAsync(string symbol,
+            DeribitOrderType? type = null, CancellationToken ct = default);
+
+        /// <summary>
         /// <para><a href="https://docs.deribit.com/#private-get_order_state" /></para>
         /// </summary>
         Task<CallResult<DeribitUserOrder>> GetOrderAsync(string orderId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Gets the position for one instrument.
+        /// <para><a href="https://docs.deribit.com/api-reference/account-management/private-get_position" /></para>
+        /// </summary>
+        /// <param name="symbol">Instrument name.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitPosition>> GetPositionAsync(string symbol,
+            CancellationToken ct = default);
+
+        /// <summary>
+        /// Gets Futures positions for a currency or all currencies.
+        /// <para><a href="https://docs.deribit.com/api-reference/account-management/private-get_positions" /></para>
+        /// </summary>
+        /// <param name="currency">Currency code or <c>any</c>.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitPosition[]>> GetPositionsAsync(string currency = "any",
+            CancellationToken ct = default);
+
+        /// <summary>
+        /// Changes the account margin model.
+        /// <para><a href="https://docs.deribit.com/api-reference/account-management/private-change_margin_model" /></para>
+        /// </summary>
+        /// <param name="marginModel">Target margin model.</param>
+        /// <param name="dryRun">Whether to preview without applying the change.</param>
+        /// <param name="userId">Optional subaccount identifier.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitMarginModelChange[]>> ChangeMarginModelAsync(
+            DeribitMarginModel marginModel, bool dryRun = false, long? userId = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Get trades for an order
@@ -163,6 +230,19 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         /// <para><a href="https://docs.deribit.com/#user-trades-instrument_name-interval" /></para>
         /// </summary>
         Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(string symbol, DeribitSubscriptionInterval interval, Action<DataEvent<DeribitUserTrade[]>> onMessage, CancellationToken ct = default);
+
+        /// <summary>
+        /// Subscribes to consolidated orders, trades, and positions for a Futures kind/currency pair.
+        /// <para><a href="https://docs.deribit.com/subscriptions/user/userchangeskindcurrencyinterval" /></para>
+        /// </summary>
+        /// <param name="kind">Instrument kind.</param>
+        /// <param name="currency">Currency code or <c>any</c>.</param>
+        /// <param name="interval">Notification interval.</param>
+        /// <param name="onMessage">Update handler.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<WebSocketResult<UpdateSubscription>> SubscribeToUserChangesAsync(DeribitOrderKind kind,
+            string currency, DeribitSubscriptionInterval interval,
+            Action<DataEvent<DeribitUserChanges>> onMessage, CancellationToken ct = default);
 
         /// <summary>
         /// <para><a href="https://docs.deribit.com/#user-portfolio-currency" /></para>

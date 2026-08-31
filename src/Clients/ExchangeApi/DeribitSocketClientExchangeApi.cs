@@ -229,6 +229,40 @@ namespace Deribit.Net.Clients.ExchangeApi
             return SubscribeAsync(BaseAddress, subscription, ct);
         }
 
+        /// <inheritdoc />
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToUserChangesAsync(
+            DeribitOrderKind kind, string currency, DeribitSubscriptionInterval interval,
+            Action<DataEvent<DeribitUserChanges>> onMessage, CancellationToken ct = default)
+        {
+            var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitUserChanges>>(
+                (receiveTime, originalData, data) =>
+                {
+                    DateTime? timestamp = null;
+                    if (data.Data.Orders.Length > 0)
+                        timestamp = data.Data.Orders.Max(order => order.LastUpdateTimestamp);
+                    if (data.Data.Trades.Length > 0)
+                    {
+                        var tradeTimestamp = data.Data.Trades.Max(trade => trade.Timestamp);
+                        if (!timestamp.HasValue || tradeTimestamp > timestamp.Value)
+                            timestamp = tradeTimestamp;
+                    }
+                    if (timestamp.HasValue)
+                        UpdateTimeOffset(timestamp.Value);
+
+                    onMessage(
+                        new DataEvent<DeribitUserChanges>(DeribitExchange.ExchangeName,
+                                data.Data, receiveTime, originalData)
+                            .WithUpdateType(SocketUpdateType.Update)
+                            .WithSymbol(data.Data.InstrumentName)
+                            .WithStreamId(data.Channel)
+                            .WithDataTimestamp(timestamp, GetTimeOffset()));
+                });
+            var channel = $"user.changes.{EnumConverter.GetString(kind)}.{currency}.{EnumConverter.GetString(interval)}";
+            var subscription = new DeribitSubscription<DeribitUserChanges>(_logger, channel,
+                internalHandler, true);
+            return SubscribeAsync(BaseAddress, subscription, ct);
+        }
+
         public Task<WebSocketResult<UpdateSubscription>> SubscribeToUserPortfolioUpdatesAsync(string? currency, Action<DataEvent<DeribitAccountBalance>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, DeribitSubscriptionEvent<DeribitAccountBalance>>((receiveTime, originalData, data) =>
@@ -317,6 +351,14 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
 
         public Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity, string? label = null, CancellationToken ct = default)
+            => PlaceOrderAsync(symbol, side, type, price, quantity,
+                DeribitTimeInForce.GoodTillCancelled, reduceOnly: false, label, ct);
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol,
+            DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity,
+            DeribitTimeInForce timeInForce, bool reduceOnly, string? label = null,
+            CancellationToken ct = default)
         {
             var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
             {
@@ -324,9 +366,25 @@ namespace Deribit.Net.Clients.ExchangeApi
                 { "amount", quantity },
                 { "price", price },
                 { "type", EnumConverter.GetString(type) },
+                { "time_in_force", EnumConverter.GetString(timeInForce) },
+                { "reduce_only", reduceOnly },
             };
             parameters.AddOptional("label", label);
             var query = new DeribitQuery<DeribitPlaceOrderResult>($"/private/{EnumConverter.GetString(side)}", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitPlaceOrderResult>> ClosePositionAsync(string symbol,
+            CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "instrument_name", symbol },
+                { "type", EnumConverter.GetString(DeribitOrderType.Market) },
+            };
+            var query = new DeribitQuery<DeribitPlaceOrderResult>(
+                "/private/close_position", parameters, true);
             return QueryAsync(query, ct);
         }
 
@@ -351,6 +409,20 @@ namespace Deribit.Net.Clients.ExchangeApi
             return QueryAsync(query, ct);
         }
 
+        /// <inheritdoc />
+        public Task<CallResult<DeribitUserOrder[]>> GetOpenOrdersByInstrumentAsync(
+            string symbol, DeribitOrderType? type = null, CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "instrument_name", symbol }
+            };
+            parameters.AddOptional("type", EnumConverter.GetString(type));
+            var query = new DeribitQuery<DeribitUserOrder[]>(
+                "/private/get_open_orders_by_instrument", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
         public Task<CallResult<DeribitUserOrder>> GetOrderAsync(string orderId, CancellationToken ct = default)
         {
             var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
@@ -358,6 +430,49 @@ namespace Deribit.Net.Clients.ExchangeApi
                 { "order_id", orderId }
             };
             var query = new DeribitQuery<DeribitUserOrder>("/private/get_order_state", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitPosition>> GetPositionAsync(string symbol,
+            CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "instrument_name", symbol }
+            };
+            var query = new DeribitQuery<DeribitPosition>(
+                "/private/get_position", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitPosition[]>> GetPositionsAsync(string currency = "any",
+            CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "currency", currency },
+                { "kind", EnumConverter.GetString(DeribitOrderKind.Future) }
+            };
+            var query = new DeribitQuery<DeribitPosition[]>(
+                "/private/get_positions", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
+        public Task<CallResult<DeribitMarginModelChange[]>> ChangeMarginModelAsync(
+            DeribitMarginModel marginModel, bool dryRun = false, long? userId = null,
+            CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "margin_model", EnumConverter.GetString(marginModel) },
+                { "dry_run", dryRun }
+            };
+            parameters.AddOptional("user_id", userId);
+            var query = new DeribitQuery<DeribitMarginModelChange[]>(
+                "/private/change_margin_model", parameters, true);
             return QueryAsync(query, ct);
         }
         /// <inheritdoc />

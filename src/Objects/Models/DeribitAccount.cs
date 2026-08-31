@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
+using Deribit.Net.Enums;
+
 namespace Deribit.Net.Objects.Models
 {
     public class DeribitAccount
@@ -51,5 +53,9 @@ namespace Deribit.Net.Objects.Models
 
         [JsonPropertyName("equity")]
         public decimal Equity { get; set; }
+
+        /// <summary>The margin model enabled for the account.</summary>
+        [JsonPropertyName("margin_model")]
+        public DeribitMarginModel MarginModel { get; set; }
     }
 }

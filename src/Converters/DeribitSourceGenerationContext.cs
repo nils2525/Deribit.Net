@@ -19,6 +19,9 @@ namespace Deribit.Net.Converters
     [JsonSerializable(typeof(DeribitResponse<DeribitTicker[]>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitStatus>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitAccount>))]
+    [JsonSerializable(typeof(DeribitResponse<DeribitMarginModelChange[]>))]
+    [JsonSerializable(typeof(DeribitResponse<DeribitPosition>))]
+    [JsonSerializable(typeof(DeribitResponse<DeribitPosition[]>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitPlaceOrderResult>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitUserOrder>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitUserOrder[]>))]
@@ -44,6 +47,8 @@ namespace Deribit.Net.Converters
     [JsonSerializable(typeof(DeribitMessage<DeribitSubscriptionEvent<DeribitUserOrder>>))]
     [JsonSerializable(typeof(DeribitMessage<DeribitUserTrade[]>))]
     [JsonSerializable(typeof(DeribitMessage<DeribitSubscriptionEvent<DeribitUserTrade[]>>))]
+    [JsonSerializable(typeof(DeribitMessage<DeribitUserChanges>))]
+    [JsonSerializable(typeof(DeribitMessage<DeribitSubscriptionEvent<DeribitUserChanges>>))]
     [JsonSerializable(typeof(DeribitMessage<DeribitAccountBalance>))]
     [JsonSerializable(typeof(DeribitMessage<DeribitSubscriptionEvent<DeribitAccountBalance>>))]
 
