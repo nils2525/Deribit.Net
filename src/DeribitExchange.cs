@@ -1,6 +1,8 @@
 using CryptoExchange.Net;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.RateLimiting;
+using CryptoExchange.Net.RateLimiting.Filters;
+using CryptoExchange.Net.RateLimiting.Guards;
 using CryptoExchange.Net.RateLimiting.Interfaces;
 using CryptoExchange.Net.SharedApis;
 using Deribit.Net.Converters;
@@ -110,11 +112,17 @@ namespace Deribit.Net
                 //.AddGuard(new RateLimitGuard(RateLimitGuard.PerHost, new PathStartFilter("/private"), 30, TimeSpan.FromSeconds(1), RateLimitWindowType.Sliding))
                 ;
 
+            TransactionLog = new RateLimitGate("Socket Transaction Log")
+                .AddGuard(new RateLimitGuard(RateLimitGuard.PerApiKey,
+                    [new LimitItemTypeFilter(RateLimitItemType.Request), new ExactPathFilter("/private/get_transaction_log")],
+                    80_000, TimeSpan.FromSeconds(1), RateLimitWindowType.Decay, 10_000));
+
             RestPrivate.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
             RestPrivateSpecific.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
             RestPublic.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
             RestPublicSpecific.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
             Socket.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
+            TransactionLog.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
         }
 
 
@@ -123,6 +131,11 @@ namespace Deribit.Net
         internal IRateLimitGate RestPublic { get; private set; }
         internal IRateLimitGate RestPublicSpecific { get; private set; }
         internal IRateLimitGate Socket { get; private set; }
+
+        /// <summary>
+        /// Rate limiter for transaction log requests.
+        /// </summary>
+        internal IRateLimitGate TransactionLog { get; private set; }
 
     }
 }

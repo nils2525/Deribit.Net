@@ -61,6 +61,20 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<CallResult<DeribitAccount>> GetAccountSummariesAsync(CancellationToken ct = default);
 
         /// <summary>
+        /// Gets a page of account transaction log entries.
+        /// <para><a href="https://docs.deribit.com/api-reference/account-management/private-get_transaction_log" /></para>
+        /// </summary>
+        /// <param name="currency">Currency code.</param>
+        /// <param name="startTime">Earliest transaction timestamp.</param>
+        /// <param name="endTime">Latest transaction timestamp.</param>
+        /// <param name="query">Optional transaction-type or text filter.</param>
+        /// <param name="count">Number of entries to return. The maximum is [<c>250</c>].</param>
+        /// <param name="subaccountId">Optional subaccount identifier.</param>
+        /// <param name="continuation">Continuation token returned by the previous page.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitTransactionLog>> GetTransactionLogAsync(string currency, DateTime startTime, DateTime endTime, string? query = null, int? count = null, long? subaccountId = null, long? continuation = null, CancellationToken ct = default);
+
+        /// <summary>
         /// <para><a href="https://docs.deribit.com/#private-buy" /></para>
         /// </summary>
         Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity, string? label = null, CancellationToken ct = default);

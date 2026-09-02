@@ -6,6 +6,7 @@ using CryptoExchange.Net.Converters.SystemTextJson;
 using CryptoExchange.Net.Interfaces;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Objects.Sockets;
+using CryptoExchange.Net.RateLimiting;
 using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
@@ -348,6 +349,36 @@ namespace Deribit.Net.Clients.ExchangeApi
             };
             var query = new DeribitQuery<DeribitAccount>("/private/get_account_summaries", parameters, true);
             return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
+        public async Task<CallResult<DeribitTransactionLog>> GetTransactionLogAsync(string currency, DateTime startTime, DateTime endTime, string? query = null, int? count = null, long? subaccountId = null, long? continuation = null, CancellationToken ct = default)
+        {
+            const string endpoint = "/private/get_transaction_log";
+            const int requestWeight = 10_000;
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "currency", currency }
+            };
+            parameters.Add("start_timestamp", startTime, DateTimeSerialization.MillisecondsNumber);
+            parameters.Add("end_timestamp", endTime, DateTimeSerialization.MillisecondsNumber);
+            parameters.AddOptional("query", query);
+            parameters.AddOptional("count", count);
+            parameters.AddOptional("subaccount_id", subaccountId);
+            parameters.AddOptional("continuation", continuation);
+
+            var transactionLogQuery = new DeribitQuery<DeribitTransactionLog>(endpoint, parameters, true);
+            var authenticationProvider = GetAuthenticationProvider();
+            if (ClientOptions.RateLimiterEnabled && authenticationProvider != null)
+            {
+                var rateLimitDefinition = new RequestDefinition(ClientOptions.Environment.SocketClientAddress, endpoint, HttpMethod.Get);
+                var subaccountKey = subaccountId == null ? null : $":subaccount:{subaccountId}";
+                var rateLimitResult = await DeribitExchange.RateLimiter.TransactionLog.ProcessAsync(_logger, transactionLogQuery.Id, RateLimitItemType.Request, rateLimitDefinition, authenticationProvider.Key, requestWeight, ClientOptions.RateLimitingBehaviour, subaccountKey, ct).ConfigureAwait(false);
+                if (!rateLimitResult.Success)
+                    return CallResult.Fail<DeribitTransactionLog>(rateLimitResult.Error!);
+            }
+
+            return await QueryAsync(transactionLogQuery, ct).ConfigureAwait(false);
         }
 
         public Task<CallResult<DeribitPlaceOrderResult>> PlaceOrderAsync(string symbol, DeribitTradeSide side, DeribitOrderType type, decimal price, decimal quantity, string? label = null, CancellationToken ct = default)

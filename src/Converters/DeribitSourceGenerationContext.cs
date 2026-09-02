@@ -28,6 +28,7 @@ namespace Deribit.Net.Converters
     [JsonSerializable(typeof(DeribitResponse<DeribitUserTrade>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitUserTrade[]>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitInstrumentTrades>))]
+    [JsonSerializable(typeof(DeribitResponse<DeribitTransactionLog>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitSocketAuthResponse>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitPagedResult<DeribitDeposit>>))]
     [JsonSerializable(typeof(DeribitResponse<DeribitPagedResult<DeribitWithdrawal>>))]
