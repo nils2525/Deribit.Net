@@ -1,6 +1,6 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using CryptoExchange.Net.Converters.SystemTextJson;
+using Deribit.Net.Converters;
 
 namespace Deribit.Net.Objects.Models
 {
@@ -60,7 +60,8 @@ namespace Deribit.Net.Objects.Models
 
         /// <summary>Type-dependent additional information. Deribit returns object, string and null token shapes.</summary>
         [JsonPropertyName("info")]
-        public JsonElement? Info { get; set; }
+        [JsonConverter(typeof(DeribitTransactionLogInfoConverter))]
+        public DeribitTransactionLogInfo? Info { get; set; }
 
         /// <summary>Updated equity value after the transaction.</summary>
         [JsonPropertyName("equity")]
