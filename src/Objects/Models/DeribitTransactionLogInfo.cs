@@ -88,6 +88,10 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("user_seq")]
         public long? UserSequence { get; set; }
 
+        /// <summary>Reason of the transaction.</summary>
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+
         /// <summary>Additional type-dependent properties not explicitly modeled by this library.</summary>
         [JsonExtensionData]
         public Dictionary<string, JsonElement>? AdditionalProperties { get; set; }
