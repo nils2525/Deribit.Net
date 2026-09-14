@@ -44,6 +44,14 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("is_active")]
         public bool IsActive { get; set; }
 
+        /// <summary>Whether this spot instrument is routed to Coinbase Exchange; omitted for native instruments. [<c>is_cbe_routed</c>]</summary>
+        [JsonPropertyName("is_cbe_routed")]
+        public bool? IsCoinbaseRouted { get; set; }
+
+        /// <summary>Alias for <see cref="IsCoinbaseRouted"/>; omitted for native instruments. [<c>is_csr</c>]</summary>
+        [JsonPropertyName("is_csr")]
+        public bool? IsCsr { get; set; }
+
         [JsonPropertyName("kind")]
         public DeribitSymbolKind Kind { get; set; }
 
