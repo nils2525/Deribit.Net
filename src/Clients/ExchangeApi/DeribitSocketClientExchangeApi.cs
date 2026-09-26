@@ -373,7 +373,7 @@ namespace Deribit.Net.Clients.ExchangeApi
             {
                 var rateLimitDefinition = new RequestDefinition(ClientOptions.Environment.SocketClientAddress, endpoint, HttpMethod.Get);
                 var subaccountKey = subaccountId == null ? null : $":subaccount:{subaccountId}";
-                var rateLimitResult = await DeribitExchange.RateLimiter.TransactionLog.ProcessAsync(_logger, transactionLogQuery.Id, RateLimitItemType.Request, rateLimitDefinition, authenticationProvider.Key, requestWeight, ClientOptions.RateLimitingBehaviour, subaccountKey, ct).ConfigureAwait(false);
+                var rateLimitResult = await DeribitExchange.RateLimiter.TransactionLog.ProcessAsync(_logger, transactionLogQuery.Id, RateLimitItemType.Request, rateLimitDefinition, authenticationProvider.Key, requestWeight, ClientOptions.RateLimitingBehaviour, subaccountKey, 1.0, ct).ConfigureAwait(false);
                 if (!rateLimitResult.Success)
                     return CallResult.Fail<DeribitTransactionLog>(rateLimitResult.Error!);
             }
