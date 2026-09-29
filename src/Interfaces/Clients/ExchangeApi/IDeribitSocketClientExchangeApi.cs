@@ -98,6 +98,18 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
             bool reduceOnly, string? label = null, CancellationToken ct = default);
 
         /// <summary>
+        /// Edits a live order in place, preserving its order ID and label.
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-edit" /></para>
+        /// </summary>
+        /// <param name="orderId">Existing exchange order ID.</param>
+        /// <param name="price">New limit price.</param>
+        /// <param name="quantity">New total amount including fills, in the instrument's native amount unit.</param>
+        /// <param name="postOnly">Whether the edited order is post-only.</param>
+        /// <param name="reduceOnly">Whether the edited order may only reduce a position.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitPlaceOrderResult>> EditOrderAsync(string orderId, decimal price, decimal quantity, bool postOnly = false, bool reduceOnly = false, CancellationToken ct = default);
+
+        /// <summary>
         /// Closes the complete position for an instrument with a reduce-only market order.
         /// <para><a href="https://docs.deribit.com/api-reference/trading/private-close_position" /></para>
         /// </summary>

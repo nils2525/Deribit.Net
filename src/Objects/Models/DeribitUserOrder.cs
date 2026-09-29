@@ -187,5 +187,33 @@ namespace Deribit.Net.Objects.Models
 
         [JsonPropertyName("primary_order_id")]
         public string? PrimaryOrderId { get; set; }
+
+        /// <summary>Starbase's last order-update timestamp in nanoseconds since the Unix epoch, when available.</summary>
+        [JsonPropertyName("starbase_last_update_timestamp")]
+        public long? StarbaseLastUpdateTimestamp { get; set; }
+
+        /// <summary>Client ID for an order submitted directly to Starbase; absent for Deribit API orders.</summary>
+        [JsonPropertyName("starbase_client_order_id")]
+        public string? StarbaseClientOrderId { get; set; }
+
+        /// <summary>Raw Starbase order ID, when the order was placed in Starbase.</summary>
+        [JsonPropertyName("starbase_order_id")]
+        public long? StarbaseOrderId { get; set; }
+
+        /// <summary>Initial display amount used to refresh an iceberg order; absent for other order types.</summary>
+        [JsonPropertyName("refresh_amount")]
+        public decimal? RefreshAmount { get; set; }
+
+        /// <summary>Currently visible iceberg amount; absent for other order types.</summary>
+        [JsonPropertyName("display_amount")]
+        public decimal? DisplayAmount { get; set; }
+
+        /// <summary>ID of the trigger order that created this order, when applicable.</summary>
+        [JsonPropertyName("trigger_order_id")]
+        public string? TriggerOrderId { get; set; }
+
+        /// <summary>ID of the parent combo order, when this order is a combo leg.</summary>
+        [JsonPropertyName("combo_order_id")]
+        public string? ComboOrderId { get; set; }
     }
 }

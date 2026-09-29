@@ -406,6 +406,21 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
 
         /// <inheritdoc />
+        public Task<CallResult<DeribitPlaceOrderResult>> EditOrderAsync(string orderId, decimal price, decimal quantity, bool postOnly = false, bool reduceOnly = false, CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "order_id", orderId },
+                { "amount", quantity },
+                { "price", price },
+                { "post_only", postOnly },
+                { "reduce_only", reduceOnly },
+            };
+            var query = new DeribitQuery<DeribitPlaceOrderResult>("/private/edit", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
         public Task<CallResult<DeribitPlaceOrderResult>> ClosePositionAsync(string symbol,
             CancellationToken ct = default)
         {

@@ -120,5 +120,49 @@ namespace Deribit.Net.Objects.Models
 
         [JsonPropertyName("instrument_name")]
         public string InstrumentName { get; set; } = string.Empty;
+
+        /// <summary>Legacy matching identifier; the API documents this field as always [<c>null</c>].</summary>
+        [JsonPropertyName("matching_id")]
+        public string? MatchingId { get; set; }
+
+        /// <summary>Starbase trade timestamp in nanoseconds since the Unix epoch, when available.</summary>
+        [JsonPropertyName("starbase_timestamp")]
+        public long? StarbaseTimestamp { get; set; }
+
+        /// <summary>Raw Starbase order ID for this user's order, when available.</summary>
+        [JsonPropertyName("starbase_order_id")]
+        public long? StarbaseOrderId { get; set; }
+
+        /// <summary>Client ID for an order submitted directly to Starbase; absent for Deribit API orders.</summary>
+        [JsonPropertyName("starbase_client_order_id")]
+        public string? StarbaseClientOrderId { get; set; }
+
+        /// <summary>Original API order type, such as [<c>market</c>] or [<c>market_limit</c>], when represented internally as a limit order.</summary>
+        [JsonPropertyName("original_order_type")]
+        public string? OriginalOrderType { get; set; }
+
+        /// <summary>Liquidated sides: [<c>M</c>] for maker, [<c>T</c>] for taker, or [<c>MT</c>] for both; absent otherwise.</summary>
+        [JsonPropertyName("liquidation")]
+        public string? Liquidation { get; set; }
+
+        /// <summary>Number of legs when the trade belongs to a block trade.</summary>
+        [JsonPropertyName("block_trade_leg_count")]
+        public int? BlockTradeLegCount { get; set; }
+
+        /// <summary>Block RFQ identifier, when applicable.</summary>
+        [JsonPropertyName("block_rfq_id")]
+        public long? BlockRfqId { get; set; }
+
+        /// <summary>Block RFQ quote identifier, when applicable.</summary>
+        [JsonPropertyName("block_rfq_quote_id")]
+        public long? BlockRfqQuoteId { get; set; }
+
+        /// <summary>Leg trades returned for a combo trade, when applicable.</summary>
+        [JsonPropertyName("legs")]
+        public DeribitUserTrade[]? Legs { get; set; }
+
+        /// <summary>Starbase match identifier, when available.</summary>
+        [JsonPropertyName("starbase_match_id")]
+        public long? StarbaseMatchId { get; set; }
     }
 }
