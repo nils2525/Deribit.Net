@@ -485,6 +485,18 @@ namespace Deribit.Net.Clients.ExchangeApi
         }
 
         /// <inheritdoc />
+        public Task<CallResult<DeribitUserOrder[]>> GetOrderStateByLabelAsync(string currency, string label, CancellationToken ct = default)
+        {
+            var parameters = new Parameters(DeribitExchange._parameterSerializationSettings)
+            {
+                { "currency", currency },
+                { "label", label }
+            };
+            var query = new DeribitQuery<DeribitUserOrder[]>("/private/get_order_state_by_label", parameters, true);
+            return QueryAsync(query, ct);
+        }
+
+        /// <inheritdoc />
         public Task<CallResult<DeribitPosition>> GetPositionAsync(string symbol,
             CancellationToken ct = default)
         {

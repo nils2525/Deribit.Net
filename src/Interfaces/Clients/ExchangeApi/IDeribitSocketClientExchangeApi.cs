@@ -144,6 +144,15 @@ namespace Deribit.Net.Interfaces.Clients.ExchangeApi
         Task<CallResult<DeribitUserOrder>> GetOrderAsync(string orderId, CancellationToken ct = default);
 
         /// <summary>
+        /// Gets open and recently closed orders matching a label. Labels are not unique.
+        /// <para><a href="https://docs.deribit.com/api-reference/trading/private-get_order_state_by_label" /></para>
+        /// </summary>
+        /// <param name="currency">Settlement currency.</param>
+        /// <param name="label">Client order label.</param>
+        /// <param name="ct">Cancellation token.</param>
+        Task<CallResult<DeribitUserOrder[]>> GetOrderStateByLabelAsync(string currency, string label, CancellationToken ct = default);
+
+        /// <summary>
         /// Gets the position for one instrument.
         /// <para><a href="https://docs.deribit.com/api-reference/account-management/private-get_position" /></para>
         /// </summary>
