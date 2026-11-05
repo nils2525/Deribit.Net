@@ -18,8 +18,12 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
         protected override Query? GetUnsubQuery(SocketConnection connection)
             => new DeribitQuery<string>("/public/disable_heartbeat", false);
 
+        /// <summary>Handles a heartbeat with a required params payload.</summary>
         public CallResult HandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, DeribitMessage<DeribitHeartbeat> message)
         {
+            if (message.Data == null)
+                return CallResult.Fail(new DeserializeError("Deribit heartbeat contained no params"));
+
             if (message.Data.Type == "test_request")
             {
                 _logger.LogDebug("Sending heartbeat...");

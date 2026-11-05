@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Deribit.Net.Objects.Models
 {
@@ -22,8 +22,9 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("scope")]
         public string Scope { get; set; } = string.Empty;
 
+        /// <summary>[<c>sid</c>] Session identifier; absent for connection-scoped tokens.</summary>
         [JsonPropertyName("sid")]
-        public string SessionId { get; set; }
+        public string? SessionId { get; set; }
 
         [JsonPropertyName("token_type")]
         public string TokenType { get; set; } = string.Empty;

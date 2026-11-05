@@ -45,8 +45,12 @@ namespace Deribit.Net.Objects.Sockets.Subscriptions
                 { "channels", _channels }
             }, Authenticated);
 
+        /// <summary>Delivers a notification only when its params payload is present.</summary>
         public CallResult DoHandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, DeribitMessage<DeribitSubscriptionEvent<T>> message)
         {
+            if (message.Data == null)
+                return CallResult.Fail(new DeserializeError("Deribit notification contained no params"));
+
             _handler.Invoke(receiveTime, originalData, message.Data);
             return CallResult.Ok();
         }

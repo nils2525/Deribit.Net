@@ -4,14 +4,16 @@ namespace Deribit.Net.Objects.Internal
 {
     internal class DeribitResponse<T> : DeribitSocketResponseBase
     {
+        /// <summary>[<c>result</c>] Response payload; absent on an error response.</summary>
         [JsonPropertyName("result")]
-        public T Data { get; set; }
+        public T? Data { get; set; }
     }
 
     internal class DeribitMessage<T> : DeribitSocketResponseBase
     {
+        /// <summary>[<c>params</c>] Notification payload when supplied.</summary>
         [JsonPropertyName("params")]
-        public T Data { get; set; }
+        public T? Data { get; set; }
     }
 
     internal abstract class DeribitSocketResponseBase

@@ -1,12 +1,13 @@
-﻿using CryptoExchange.Net.Converters.SystemTextJson;
+using CryptoExchange.Net.Converters.SystemTextJson;
 using System.Text.Json.Serialization;
 
 namespace Deribit.Net.Objects.Models
 {
     public class DeribitCandle
     {
+        /// <summary>[<c>symbol</c>] Market identifier when included in the candle payload.</summary>
         [JsonPropertyName("symbol")]
-        public string Symbol { get; set; }
+        public string? Symbol { get; set; }
 
         [JsonPropertyName("open")]
         public decimal Open { get; set; }

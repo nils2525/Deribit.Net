@@ -291,7 +291,11 @@ namespace Deribit.Net.Clients.ExchangeApi
             if (response.Error != null)
                 return CallResult.Fail<T>(response.Error);
 
-            return CallResult.Ok(response.Data!.Data, response.OriginalData);
+            // Error and malformed envelopes can omit result; do not expose successful null data.
+            if (response.Data == null || response.Data.Data == null)
+                return CallResult.Fail<T>(new DeserializeError("Successful Deribit response contained no result"));
+
+            return CallResult.Ok(response.Data.Data, response.OriginalData);
         }
 
         internal async Task<bool> SendHeartbeatAsync()
@@ -302,11 +306,12 @@ namespace Deribit.Net.Clients.ExchangeApi
             return response.Success;
         }
 
+        /// <inheritdoc />
         public async Task<CallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
         {
             var query = new DeribitQuery<DeribitTimestamp>("/public/get_time", false);
             var response = await QueryAsync(query, ct);
-            return response.As(response.Data.Timestamp);
+            return response.Success ? CallResult.Ok(response.Data.Timestamp, response.OriginalData) : CallResult.Fail<DateTime>(response.Error);
         }
 
         public Task<CallResult<DeribitSymbol[]>> GetSymbolsAsync(CancellationToken ct = default)

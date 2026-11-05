@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 using Deribit.Net.Enums;
 
@@ -9,17 +9,20 @@ namespace Deribit.Net.Objects.Models
         [JsonPropertyName("id")]
         public long AccountId { get; set; }
 
+        /// <summary>[<c>email</c>] Email address when supplied.</summary>
         [JsonPropertyName("email")]
-        public string Mail { get; set; }
+        public string? Mail { get; set; }
 
         [JsonPropertyName("login_enabled")]
         public bool LoginEnabled { get; set; }
 
+        /// <summary>[<c>type</c>] Account type when supplied.</summary>
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
+        /// <summary>[<c>username</c>] Username when supplied.</summary>
         [JsonPropertyName("username")]
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         [JsonPropertyName("summaries")]
         public List<DeribitAccountBalance> Balances { get; set; } = new();
